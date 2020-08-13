@@ -1,0 +1,11 @@
+-cp game/src
+-main Main
+-js build/404.js
+-dce full
+
+--next
+
+-cp tools/pack
+-main Main
+-neko build/PackTool.n
+-cmd neko build/PackTool.n
