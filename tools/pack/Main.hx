@@ -72,6 +72,6 @@ class Main{
 		
 		var bytes:Int = FileSystem.stat(packageFile).size;
 		trace(Std.string(bytes / 1024) + " / 13kb bytes used!");
-		trace(Std.string((bytes / 1024) / 13) + "%");
+		trace(Std.string((bytes / 1024) / 0.13) + "%");
 	}
 }
