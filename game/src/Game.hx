@@ -1,5 +1,7 @@
 package;
 
+import astar.DistGrid;
+import astar.BspGrid;
 import js.html.CanvasRenderingContext2D;
 
 class Game{
@@ -7,6 +9,12 @@ class Game{
 
 	public function new(c:CanvasRenderingContext2D){
 		this.c = c;
+
+		var bsp:BspGrid = new BspGrid(4, 4);
+		bsp.set(1, 1, true);
+
+		var dst:DistGrid = new DistGrid(bsp);
+		trace(dst.route(2,2, 1, 0));
 	}
 
 	public function update(s:Float){
