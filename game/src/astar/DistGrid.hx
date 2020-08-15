@@ -2,15 +2,15 @@ package astar;
 
 class DistGrid{
 	private var dirty:Bool;
-	private var space:Array<Array<Int>>;
+	private var space:Array<Array<Float>>;
 	private var bsp:BspGrid;
 
 	public function new(bsp:BspGrid){
 		dirty = false;
 
-		space = new Array<Array<Int>>();
+		space = new Array<Array<Float>>();
 		for(x in 0...bsp.w){
-			var col = new Array<Int>();
+			var col = new Array<Float>();
 			for(y in 0...bsp.h){
 				col.push(-1);
 			}
@@ -32,9 +32,9 @@ class DistGrid{
 		}
 	}
 
-	public function route(sx:Int, sy:Int, ex:Int, ey:Int):Array<Point>{
+	public function route(sx:Int, sy:Int, ex:Int, ey:Int, max:Int):Array<Point>{
 		if(space[sx][sy] != 0){
-			fillFrom(sx, sy);
+			fillFrom(sx, sy, max);
 		}
 
 		if(space[ex][ey] == -1){
@@ -42,9 +42,15 @@ class DistGrid{
 		}
 
 		function findNext(x:Int, y:Int):Point{
-			var c:Int = space[x][y];
-			var n:Int = 0;
+			var c:Float = space[x][y];
 
+			// smallest
+			var s:Float = -1;
+			var sx:Int = 0;
+			var sy:Int = 0;
+
+			//next
+			var n:Float = 0;
 			var nx:Int = 0;
 			var ny:Int = 0;
 
@@ -58,10 +64,17 @@ class DistGrid{
 					}
 
 					n = space[nx][ny];
-					if(n != -1 && n < c){
-						return makePoint(nx, ny);
+
+					if(c - n < 2 && n != -1 && (s == -1 || s > n)){
+						s = n;
+						sx = nx;
+						sy = ny;
 					}
 				}
+			}
+
+			if(s != -1){
+				return makePoint(sx, sy);
 			}
 
 			return null;
@@ -83,26 +96,32 @@ class DistGrid{
 		return nav;
 	}
 
-	public function fillFrom(x:Int, y:Int){
+	public function fillFrom(x:Int, y:Int, max:Int){
 		clear();
 
 		space[x][y] = 0;
-		calculateNeighbors(x, y);
+		calculateNeighbors(x, y, max);
+
+		dirty = true;
 	}
 
-	private function calculateNeighbors(x:Int, y:Int){
-		var me:Int = space[x][y];
-		var nv:Int = 0;
+	private function calculateNeighbors(x:Int, y:Int, max:Float){
+		var me:Float = space[x][y];
+		if(me >= max){
+			return;
+		}
 
-		function calc(xx:Int, yy:Int):Bool{
+		var nv:Float = 0;
+
+		function calc(xx:Int, yy:Int, d:Float = 1):Bool{
 			if(bsp.get(xx, yy)){
 				return false;
 			}
 
 			nv = space[xx][yy];
-			if(nv == -1 || nv > me + 1){
-				space[xx][yy] = me + 1;
-				calculateNeighbors(xx, yy);
+			if(nv == -1 || nv > me + d){
+				space[xx][yy] = me + d;
+				calculateNeighbors(xx, yy, max);
 			}
 
 			return true;
@@ -114,17 +133,21 @@ class DistGrid{
 		var d:Bool = calc(x, y + 1);
 
 		if(r && u){
-			calc(x + 1, y - 1);
+			calc(x + 1, y - 1, 1.4);
 		}
 		if(r && d){
-			calc(x + 1, y + 1);
+			calc(x + 1, y + 1, 1.4);
 		}
 		if(l && u){
-			calc(x - 1, y - 1);
+			calc(x - 1, y - 1, 1.4);
 		}
 		if(l && d){
-			calc(x - 1, y + 1);
+			calc(x - 1, y + 1, 1.4);
 		}
+	}
+
+	public function get(x:Int, y:Int):Float{
+		return space[x][y];
 	}
 
 	private inline function makePoint(xx:Int, yy:Int):Point{
