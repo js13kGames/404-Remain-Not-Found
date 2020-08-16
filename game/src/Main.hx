@@ -1,13 +1,15 @@
 package;
 
+import resources.ResourceBuilder;
 import js.html.WheelEvent;
 import js.html.MouseEvent;
-import js.html.BodyElement;
 import js.html.CanvasRenderingContext2D;
 import js.html.CanvasElement;
 import js.Browser;
 
 class Main{
+	private static var r = ResourceBuilder.build();
+
 	private static var canvas:CanvasElement;
 
 	public static var c:CanvasRenderingContext2D;
@@ -61,7 +63,7 @@ class Main{
 	}
 
 	public static function onMouseMove(e:MouseEvent){
-		g.onMouseMove(e.movementX * (canvas.width / canvas.clientWidth), e.movementY * (canvas.height / canvas.clientHeight));
+		g.onMouseMove(getX(e), getY(e), e.movementX * (canvas.width / canvas.clientWidth), e.movementY * (canvas.height / canvas.clientHeight));
 	}
 
 	public static function onMouseWheel(e:WheelEvent){

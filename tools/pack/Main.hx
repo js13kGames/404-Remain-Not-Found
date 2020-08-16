@@ -68,7 +68,7 @@ class Main{
 	}
 
 	public static function pack(){
-		Sys.command("7z", ["a", packageFile, "./" + finalMinifiedDir + "*"]);
+		Sys.command("7z", ["a", packageFile, "./" + finalMinifiedDir + "*", "-mx9"]);
 		
 		var bytes:Int = FileSystem.stat(packageFile).size;
 		trace(Std.string(bytes / 1024) + " / 13kb bytes used!");

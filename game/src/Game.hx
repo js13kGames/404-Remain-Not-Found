@@ -3,11 +3,8 @@ package;
 import actor.Phase;
 import js.html.WheelEvent;
 import astar.Point;
-import js.html.MouseScrollEvent;
-import js.html.MouseEvent;
 import js.html.Element;
 import actor.Player;
-import astar.DistGrid;
 import astar.BspGrid;
 import js.html.CanvasRenderingContext2D;
 
@@ -21,6 +18,8 @@ class Game{
 
 	private var isMouseDown:Bool = false;
 	private var mouseStart:Point = null;
+	private var mouseX:Float = 0;
+	private var mouseY:Float = 0;
 
 	public function new(ele:Element, c:CanvasRenderingContext2D){
 		this.c = c;
@@ -75,7 +74,10 @@ class Game{
 		isMouseDown = false;
 	}
 
-	public function onMouseMove(dx:Float, dy:Float){
+	public function onMouseMove(x:Float, y:Float, dx:Float, dy:Float){
+		mouseX = x;
+		mouseY = y;
+
 		if(isMouseDown){
 			viewX += dx;
 			viewY += dy;
@@ -83,8 +85,13 @@ class Game{
 	}
 
 	public function onMouseWheel(e:WheelEvent){
+		var sx = (mouseX - viewX) / viewZoom;
+		var sy = (mouseY - viewY) / viewZoom;
+
 		viewZoom += e.deltaY * -0.1;
-		// shift view by mouse position
+
+		viewX += (((mouseX - viewX) / viewZoom) - sx) * viewZoom;
+		viewY += (((mouseY - viewY) / viewZoom) - sy) * viewZoom;
 	}
 
 	public function onClick(x:Float, y:Float){
