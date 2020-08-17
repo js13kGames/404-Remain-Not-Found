@@ -45,6 +45,7 @@ class ResourceBuilder{
 		var tiled = Json.parse(content);
 
 		var wallLayer = findObject(tiled.layers, "wall");
+		var playerLayer = findObject(tiled.layers, "player");
 
 		return {
 			g: tiled.tilewidth,
@@ -52,7 +53,7 @@ class ResourceBuilder{
 			h: tiled.height,
 			wl: buildWalls(wallLayer.objects),
 			en: [],
-			pl: []
+			pl: buildPlayers(playerLayer.objects)
 		}
 	}
 
@@ -74,14 +75,14 @@ class ResourceBuilder{
 	}
 
 	private static function makeWall(wallObj:Dynamic):WallDef{
-		var corners:Array<Point> = new Array<Point>();
+		var corners:Array<Array<Int>> = new Array<Array<Int>>();
 		var poly:Array<Dynamic> = wallObj.polygon;
 
 		for(p in poly){
-			corners.push({
-				x: wallObj.x + p.x,
-				y: wallObj.y + p.y
-			});
+			corners.push([
+				wallObj.x + p.x,
+				wallObj.y + p.y
+			]);
 		}
 
 		return {
@@ -89,6 +90,21 @@ class ResourceBuilder{
 		};
 	}
 
+	private static function buildPlayers(playerObj:Array<Dynamic>):Array<PlayerDef>{
+		var res:Array<PlayerDef> = new Array<PlayerDef>();
+		for(po in playerObj){
+			res.push(makePlayer(po));
+		}
+
+		return res;
+	}
+
+	private static function makePlayer(playerObj:Dynamic):PlayerDef{
+		return {
+			x: playerObj.x + playerObj.width / 2,
+			y: playerObj.y + playerObj.height / 2
+		};
+	}
 
 	#end
 

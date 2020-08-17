@@ -25,6 +25,7 @@ class Main{
 
 		c = canvas.getContext2d();
 		g = new Game(canvas, c);
+		g.loadLevel(r.lvl[0]);
 
 		Browser.window.onmousedown = onMouseDown;
 		Browser.window.onmouseup = onMouseUp;

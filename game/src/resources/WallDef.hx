@@ -1,5 +1,5 @@
 package resources;
 
 typedef WallDef = {
-	var c:Array<Point>;
+	var c:Array<Array<Int>>;
 }
