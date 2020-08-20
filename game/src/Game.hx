@@ -1,5 +1,7 @@
 package;
 
+import math.Vec;
+import math.Line;
 import math.AABB;
 import resources.LvlDef;
 import actor.Phase;
@@ -23,14 +25,13 @@ class Game{
 	private var mouseX:Float = 0;
 	private var mouseY:Float = 0;
 
-	private var bsp:BspGrid;
+	private var grid:Float;
+	private var bsp:BspGrid = null;
 	private var walls:Array<Wall>;
 	private var player:Array<Player>;
 
 	public function new(ele:Element, c:CanvasRenderingContext2D){
 		this.c = c;
-
-		var bsp:BspGrid = new BspGrid(100, 100);
 
 		walls = new Array<Wall>();
 		player = new Array<Player>();
@@ -54,18 +55,20 @@ class Game{
 
 		c.strokeStyle = "#FFF";
 
-		for(x in 1...100){
-			c.beginPath();
-			c.moveTo(x * 32, 0);
-			c.lineTo(x * 32, 100*32);
-			c.stroke();
-		}
+		if(bsp != null){
+			for(x in 1...bsp.w){
+				c.beginPath();
+				c.moveTo(x * grid, 0);
+				c.lineTo(x * grid, bsp.h * grid);
+				c.stroke();
+			}
 
-		for(y in 1...100){
-			c.beginPath();
-			c.moveTo(0, y*32);
-			c.lineTo(100*32, y*32);
-			c.stroke();
+			for(y in 1...bsp.h){
+				c.beginPath();
+				c.moveTo(0, y * grid);
+				c.lineTo(bsp.w * grid, y * grid);
+				c.stroke();
+			}
 		}
 
 		for(w in walls){
@@ -116,12 +119,14 @@ class Game{
 	}
 
 	public function loadLevel(d:LvlDef){
+		grid = d.g;
 		bsp = new BspGrid(d.w, d.h);
 
 		walls = new Array<Wall>();
 		for(wd in d.wl){
-			walls.push(new Wall(wd.c));
-			// TODO add wall to bsp
+			var wl:Wall = new Wall(wd.c);
+			walls.push(wl);
+			addWallToBsp(bsp, wl);
 		}
 
 		player = new Array<Player>();
@@ -136,6 +141,29 @@ class Game{
 
 		if(player.length > 0){
 			player[0].phase = Phase.TURN_START;
+		}
+
+	}
+
+	private inline function addWallToBsp(bsp:BspGrid, wall:Wall){
+		var gx = Math.floor(wall.aabb.x / grid);
+		var gy = Math.floor(wall.aabb.y / grid);
+		var gw = Math.ceil(wall.aabb.w / grid);
+		var gh = Math.ceil(wall.aabb.h / grid);
+
+		var ln:Line = new Line(wall.aabb.x - 2, wall.aabb.y - 1, 0, 0);
+
+		for(xx in 0...gw){
+			ln.b.x = wall.aabb.x + (xx * grid) + (grid / 2);
+
+			for(yy in 0...gh){
+				ln.b.y = wall.aabb.y + (yy * grid) + (grid / 2);
+
+				var ic = wall.countIntersect(ln);
+				if(ic % 2 != 0){
+					bsp.set(gx + xx, gy + yy, true);
+				}
+			}
 		}
 
 	}

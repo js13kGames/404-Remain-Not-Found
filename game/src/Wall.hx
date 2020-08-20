@@ -1,27 +1,44 @@
 package;
 
-import js.html.CanvasWindingRule;
+import math.Vec;
+import math.Line;
 import js.html.CanvasRenderingContext2D;
 
 class Wall extends Entity{
-	private var cl:Array<Array<Int>>;
+	private var e:Array<Line>;
 
 	public function new(cl:Array<Array<Int>>){
 		super();
-		this.cl = cl;
+
+		e = new Array<Line>();
 
 		aabb.x = cl[0][0];
 		aabb.y = cl[0][1];
 		var xx:Float = aabb.x;
 		var yy:Float = aabb.y;
-		for(c in cl){
-			aabb.x = Math.min(c[0], aabb.x);
-			aabb.y = Math.min(c[1], aabb.y);
-			xx = Math.max(c[0], xx);
-			yy = Math.max(c[1], yy);
+		var lx:Float = 0;
+		var ly:Float = 0;
+
+		for(i in 0...cl.length){
+			var x = cl[i][0];
+			var y = cl[i][1];
+
+			aabb.x = Math.min(x, aabb.x);
+			aabb.y = Math.min(y, aabb.y);
+			xx = Math.max(x, xx);
+			yy = Math.max(y, yy);
+
+			if(i > 0){
+				e.push(new Line(lx, ly, x, y));
+			}
+
+			lx = x;
+			ly = y;
 		}
 		aabb.w = xx - aabb.x;
 		aabb.h = yy - aabb.y;
+
+		e.push(new Line(lx, ly, cl[0][0], cl[0][1]));
 	}
 
 	override function render(c:CanvasRenderingContext2D) {
@@ -30,17 +47,36 @@ class Wall extends Entity{
 		c.fillStyle = "#000";
 
 		c.beginPath();
-		c.moveTo(cl[0][0], cl[0][1]);
-		var first:Bool = true;
-		for(cnr in cl){
-			if(first){
-				first = false;
-				continue;
-			}
+		c.moveTo(e[0].a.x, e[0].a.y);
+		c.lineTo(e[0].b.x, e[0].b.y);
 
-			c.lineTo(cnr[0], cnr[1]);
+		for(i in 1...e.length-1){
+			c.lineTo(e[i].b.x, e[i].b.y);
 		}
 		c.closePath();
 		c.fill();
+	}
+
+	public function countIntersect(line:Line):Int{
+		var r:Int = 0;
+		for(l in e){
+			if(line.getIntersect(l) != null){
+				r++;
+			}
+		}
+		return r;
+	}
+
+	public function getIntersect(line:Line):Array<Vec>{
+		var r:Array<Vec> = new Array<Vec>();
+
+		for(l in e){
+			var i = line.getIntersect(l);
+			if(i != null){
+				r.push(i);
+			}
+		}
+
+		return r;
 	}
 }
