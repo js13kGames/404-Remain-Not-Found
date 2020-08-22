@@ -46,6 +46,8 @@ class Actor extends Entity{
 				xSpeed = Math.cos(dir) * navSpeed;
 				ySpeed = Math.sin(dir) * navSpeed;
 			}
+		}else if(phase == Phase.MOVING){
+			phase = Phase.TURN_END;
 		}
 	}
 

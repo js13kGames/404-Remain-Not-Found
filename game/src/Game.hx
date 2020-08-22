@@ -1,5 +1,6 @@
 package;
 
+import actor.Actor;
 import math.Vec;
 import math.Line;
 import math.AABB;
@@ -28,18 +29,31 @@ class Game{
 	private var grid:Float;
 	private var bsp:BspGrid = null;
 	private var walls:Array<Wall>;
+
 	private var player:Array<Player>;
+	private var actor:Array<Actor>;
+	private var currentActor:Int = -1;
 
 	public function new(ele:Element, c:CanvasRenderingContext2D){
 		this.c = c;
 
 		walls = new Array<Wall>();
 		player = new Array<Player>();
+		actor = new Array<Actor>();
 	}
 
 	public function update(s:Float){
-		for(p in player){
-			p.update(s);
+		if(currentActor != -1){
+			if(actor[currentActor].phase == Phase.TURN_END){
+				actor[currentActor].phase = Phase.IDLE;
+				currentActor = (currentActor + 1 >= actor.length) ? 0 : currentActor + 1;
+
+				actor[currentActor].phase = Phase.TURN_START;
+			}
+		}
+
+		for(a in actor){
+			a.update(s);
 		}
 
 		c.fillStyle = "#AAA";
@@ -77,8 +91,8 @@ class Game{
 			}
 		}
 
-		for(p in player){
-			p.render(c);
+		for(a in actor){
+			a.render(c);
 		}
 
 		c.restore();
@@ -107,6 +121,9 @@ class Game{
 		var sy = (mouseY - viewY) / viewZoom;
 
 		viewZoom += e.deltaY * -0.1;
+		if(viewZoom <= 0){
+			viewZoom = 0.1;
+		}
 
 		viewX += (((mouseX - viewX) / viewZoom) - sx) * viewZoom;
 		viewY += (((mouseY - viewY) / viewZoom) - sy) * viewZoom;
@@ -129,6 +146,8 @@ class Game{
 			addWallToBsp(bsp, wl);
 		}
 
+		actor = new Array<Actor>();
+
 		player = new Array<Player>();
 		for(p in d.pl){
 			var pl = new Player(bsp, 32);
@@ -137,10 +156,12 @@ class Game{
 			pl.phase = Phase.IDLE;
 
 			player.push(pl);
+			actor.push(pl);
 		}
 
 		if(player.length > 0){
-			player[0].phase = Phase.TURN_START;
+			currentActor = 0;
+			actor[0].phase = Phase.TURN_START;
 		}
 
 	}

@@ -147,6 +147,10 @@ class DistGrid{
 	}
 
 	public function get(x:Int, y:Int):Float{
+		if(x < 0 || x >= bsp.w || y < 0 || y >= bsp.h){
+			return -1;
+		}
+		
 		return space[x][y];
 	}
 
