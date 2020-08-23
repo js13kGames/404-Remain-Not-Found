@@ -46,13 +46,14 @@ class ResourceBuilder{
 
 		var wallLayer = findObject(tiled.layers, "wall");
 		var playerLayer = findObject(tiled.layers, "player");
+		var enemyLayer = findObject(tiled.layers, "enemy");
 
 		return {
 			g: tiled.tilewidth,
 			w: tiled.width,
 			h: tiled.height,
 			wl: buildWalls(wallLayer.objects),
-			en: [],
+			en: buildEnemies(enemyLayer.objects),
 			pl: buildPlayers(playerLayer.objects)
 		}
 	}
@@ -104,6 +105,44 @@ class ResourceBuilder{
 			x: playerObj.x + playerObj.width / 2,
 			y: playerObj.y + playerObj.height / 2
 		};
+	}
+
+	private static function buildEnemies(enemyObj:Array<Dynamic>):Array<EnemyDef>{
+		var e:Map<String, EnemyDef> = new Map<String, EnemyDef>();
+
+		for(i in enemyObj){
+			var objName:String = i.name;
+			var nameIndex:Array<String> = objName.split("-");
+			var enemyName:String = nameIndex[0];
+
+			var enemy:EnemyDef;
+			if(e.exists(enemyName)){
+				enemy = e[enemyName];
+			}else{
+				enemy = {
+					x: 0.0,
+					y: 0.0,
+					nav: new Array<Array<Float>>()
+				};
+				e.set(enemyName, enemy);
+			}
+
+			if(nameIndex.length > 1){
+				var idx:Int = Std.parseInt(nameIndex[1]) - 1;
+				enemy.nav[idx] = [i.x, i.y];
+			}else{
+				// load position
+				enemy.x = i.x + i.width / 2;
+				enemy.y = i.y + i.height / 2;
+			}
+		}
+
+		var res:Array<EnemyDef> = new Array<EnemyDef>();
+		for(i in e){
+			res.push(i);
+		}
+
+		return res;
 	}
 
 	#end

@@ -1,6 +1,6 @@
 package actor;
 
-import path.Node;
+import math.Vec;
 import astar.DistGrid;
 import js.html.CanvasRenderingContext2D;
 import astar.BspGrid;
@@ -12,7 +12,7 @@ class Actor extends Entity{
 	public var phase(default, default):Phase;
 	private var dst:DistGrid;
 
-	private var navNodes:Array<Node> = [];
+	private var navNodes:Array<Vec> = [];
 	private var navIndex:Int = 0;
 	private var navSpeed:Float = 0;
 
@@ -29,7 +29,7 @@ class Actor extends Entity{
 		super.update(s);
 
 		if(navNodes.length > navIndex){
-			var node:Node = navNodes[navIndex];
+			var node:Vec = navNodes[navIndex];
 
 			// calculate distance
 			var dist = Math.sqrt(Math.pow(x - node.x, 2) + Math.pow(y - node.y, 2));

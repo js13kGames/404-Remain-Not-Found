@@ -1,5 +1,6 @@
 package;
 
+import actor.Guard;
 import actor.Actor;
 import math.Vec;
 import math.Line;
@@ -150,7 +151,7 @@ class Game{
 
 		player = new Array<Player>();
 		for(p in d.pl){
-			var pl = new Player(bsp, 32);
+			var pl = new Player(bsp, grid);
 			pl.x = p.x;
 			pl.y = p.y;
 			pl.phase = Phase.IDLE;
@@ -159,7 +160,22 @@ class Game{
 			actor.push(pl);
 		}
 
-		if(player.length > 0){
+		for(e in d.en){
+			var en = new Guard(bsp, grid);
+			en.x = e.x;
+			en.y = e.y;
+
+			for(n in e.nav){
+				en.ptrl.push({
+					x: Math.floor(n[0] / grid),
+					y: Math.floor(n[1] / grid)
+				});
+			}
+
+			actor.push(en);
+		}
+
+		if(actor.length > 0){
 			currentActor = 0;
 			actor[0].phase = Phase.TURN_START;
 		}
