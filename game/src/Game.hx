@@ -23,13 +23,14 @@ class Game{
 	private var viewAABB:AABB = new AABB();
 
 	private var isMouseDown:Bool = false;
+	private var panning:Bool = false;
 	private var mouseStart:Point = null;
 	private var mouseX:Float = 0;
 	private var mouseY:Float = 0;
 
-	private var grid:Float;
-	private var bsp:BspGrid = null;
-	private var walls:Array<Wall>;
+	public var grid(default, null):Float;
+	public var bsp(default, null):BspGrid = null;
+	public var walls(default, null):Array<Wall>;
 
 	private var player:Array<Player>;
 	private var actor:Array<Actor>;
@@ -101,6 +102,7 @@ class Game{
 
 	public function onMouseDown(x:Float, y:Float){
 		isMouseDown = true;
+		panning = false;
 	}
 
 	public function onMouseUp(x:Float, y:Float){
@@ -114,6 +116,7 @@ class Game{
 		if(isMouseDown){
 			viewX += dx;
 			viewY += dy;
+			panning = true;
 		}
 	}
 
@@ -131,8 +134,10 @@ class Game{
 	}
 
 	public function onClick(x:Float, y:Float){
-		for(p in player){
-			p.click((x - viewX) / viewZoom, (y - viewY) / viewZoom);
+		if(!panning){
+			for(p in player){
+				p.click((x - viewX) / viewZoom, (y - viewY) / viewZoom);
+			}
 		}
 	}
 
@@ -161,7 +166,7 @@ class Game{
 		}
 
 		for(e in d.en){
-			var en = new Guard(bsp, grid);
+			var en = new Guard(this);
 			en.x = e.x;
 			en.y = e.y;
 

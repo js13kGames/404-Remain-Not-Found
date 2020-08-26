@@ -57,6 +57,28 @@ class Wall extends Entity{
 		c.fill();
 	}
 
+	/**
+	 * @param c 
+	 * @param lx Light source X
+	 * @param ly Light source Y
+	 * @param d Shadow cast distance
+	 */
+	public function renderShadow(c:CanvasRenderingContext2D, lx:Float, ly:Float, d:Float){
+
+		for(w in e){
+			var da:Float = Math.atan2(w.a.y - ly, w.a.x - lx);
+			var db:Float = Math.atan2(w.b.y - ly, w.b.x - lx);
+
+			c.beginPath();
+			c.moveTo(w.a.x, w.a.y);
+			c.lineTo(w.b.x, w.b.y);
+			c.lineTo(w.b.x + Math.cos(db) * d, w.b.y + Math.sin(db) * d);
+			c.lineTo(w.a.x + Math.cos(da) * d, w.a.y + Math.sin(da) * d);
+			c.lineTo(w.a.x, w.a.y);
+			c.fill();
+		}
+	}
+
 	public function countIntersect(line:Line):Int{
 		var r:Int = 0;
 		for(l in e){

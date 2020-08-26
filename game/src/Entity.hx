@@ -12,6 +12,8 @@ class Entity{
 
 	public var aabb(default, null):AABB;
 
+	public var dir(default, null):Float = 0;
+
 	public function new(){
 		x = 0;
 		y = 0;
@@ -26,6 +28,10 @@ class Entity{
 		y += ySpeed * s;
 		aabb.x += xSpeed * s;
 		aabb.y += ySpeed * s;
+
+		if(xSpeed != 0 || ySpeed != 0){
+			dir = Math.atan2(ySpeed, xSpeed);
+		}
 	}
 
 	public function render(c:CanvasRenderingContext2D){

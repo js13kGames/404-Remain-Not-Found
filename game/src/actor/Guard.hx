@@ -6,11 +6,17 @@ import astar.Point;
 import astar.BspGrid;
 
 class Guard extends Actor{
+	private static inline var FOV:Float = 3.14159 * 0.175;
+	private static inline var VIEW_DIST:Float = 512;
+
+	private var g:Game;
+
 	public var ptrl(default, null):Array<Point>;
 	private var ptrlIdx:Int = -1;
 
-	public function new(bsp:BspGrid, gridSize:Float){
-		super(bsp, gridSize);
+	public function new(g:Game){
+		super(g.bsp, g.grid);
+		this.g = g;
 
 		ptrl = new Array<Point>();
 	}
@@ -45,5 +51,14 @@ class Guard extends Actor{
 		c.beginPath();
 		c.arc(x, y, gridSize / 2, 0, Math.PI * 2);
 		c.fill();
+
+		c.fillStyle = "#00FF0055";
+		c.beginPath();
+		c.moveTo(x, y);
+		c.arc(x, y, VIEW_DIST, dir - FOV, dir + FOV);
+		c.lineTo(x, y);
+		c.fill();
+
+		// draw vision
 	}
 }
