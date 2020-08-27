@@ -1,5 +1,6 @@
 package;
 
+import math.LcMath;
 import math.AABB;
 import js.html.CanvasRenderingContext2D;
 
@@ -30,7 +31,7 @@ class Entity{
 		aabb.y += ySpeed * s;
 
 		if(xSpeed != 0 || ySpeed != 0){
-			dir = Math.atan2(ySpeed, xSpeed);
+			dir = LcMath.capAngle(Math.atan2(ySpeed, xSpeed));
 		}
 	}
 

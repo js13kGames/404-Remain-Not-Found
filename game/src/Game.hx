@@ -2,7 +2,6 @@ package;
 
 import actor.Guard;
 import actor.Actor;
-import math.Vec;
 import math.Line;
 import math.AABB;
 import resources.LvlDef;
@@ -32,7 +31,7 @@ class Game{
 	public var bsp(default, null):BspGrid = null;
 	public var walls(default, null):Array<Wall>;
 
-	private var player:Array<Player>;
+	public var player(default, null):Array<Player>;
 	private var actor:Array<Actor>;
 	private var currentActor:Int = -1;
 
