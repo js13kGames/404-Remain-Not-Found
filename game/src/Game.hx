@@ -1,5 +1,7 @@
 package;
 
+import js.Browser;
+import js.html.CanvasElement;
 import actor.Guard;
 import actor.Actor;
 import math.Line;
@@ -15,6 +17,7 @@ import js.html.CanvasRenderingContext2D;
 
 class Game{
 	private var c:CanvasRenderingContext2D;
+	private var ec:Array<CanvasRenderingContext2D>;
 
 	private var viewX:Float = 0;
 	private var viewY:Float = 0;
@@ -37,6 +40,7 @@ class Game{
 
 	public function new(ele:Element, c:CanvasRenderingContext2D){
 		this.c = c;
+		ec = new Array<CanvasRenderingContext2D>();
 
 		walls = new Array<Wall>();
 		player = new Array<Player>();
@@ -63,6 +67,11 @@ class Game{
 		c.save();
 		c.translate(viewX, viewY);
 		c.scale(viewZoom, viewZoom);
+
+		for(i in ec){
+			i.clearRect(0, 0, i.canvas.width, i.canvas.height);
+		}
+
 		viewAABB.x = -viewX / viewZoom;
 		viewAABB.y = -viewY / viewZoom;
 		viewAABB.w = c.canvas.width / viewZoom;
@@ -141,6 +150,8 @@ class Game{
 	}
 
 	public function loadLevel(d:LvlDef){
+		ec = new Array<CanvasRenderingContext2D>();
+
 		grid = d.g;
 		bsp = new BspGrid(d.w, d.h);
 
@@ -207,5 +218,16 @@ class Game{
 			}
 		}
 
+	}
+
+	public function newCanvas():CanvasRenderingContext2D{
+		var ele:CanvasElement = Browser.document.createCanvasElement();
+		ele.width = c.canvas.width;
+		ele.height = c.canvas.height;
+
+		var cc = ele.getContext2d();
+		ec.push(cc);
+
+		return cc;
 	}
 }

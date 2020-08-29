@@ -18,11 +18,14 @@ class Guard extends Actor{
 
 	private var canSeePlayer:Bool = false;
 
+	private var vc:CanvasRenderingContext2D;
+
 	public function new(g:Game){
 		super(g.bsp, g.grid);
 		this.g = g;
 
 		ptrl = new Array<Point>();
+		vc = g.newCanvas();
 	}
 
 	override function update(s:Float) {
@@ -90,11 +93,20 @@ class Guard extends Actor{
 		c.arc(x, y, gridSize / 2, 0, Math.PI * 2);
 		c.fill();
 
-		c.fillStyle = canSeePlayer ? "#FF000055" : "#00FF0055";
-		c.beginPath();
-		c.moveTo(x, y);
-		c.arc(x, y, VIEW_DIST, dir - FOV, dir + FOV);
-		c.lineTo(x, y);
-		c.fill();
+		vc.globalCompositeOperation = "source-over";
+		vc.fillStyle = canSeePlayer ? "#FF000055" : "#00FF0055";
+		vc.beginPath();
+		vc.moveTo(x, y);
+		vc.arc(x, y, VIEW_DIST, dir - FOV, dir + FOV);
+		vc.lineTo(x, y);
+		vc.fill();
+
+		vc.globalCompositeOperation = "destination-out";
+		vc.fillStyle="#000";
+		for(w in g.walls){
+			w.renderShadow(vc, x, y, VIEW_DIST);
+		}
+
+		c.drawImage(vc.canvas, 0, 0);
 	}
 }
