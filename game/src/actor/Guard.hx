@@ -11,7 +11,7 @@ class Guard extends Actor{
 	private static inline var FOV:Float = 3.14159 * 0.175;
 	private static inline var VIEW_DIST:Float = 512;
 
-	private var g:Game;
+	private var g:PlayRoom;
 
 	public var ptrl(default, null):Array<Point>;
 	private var ptrlIdx:Int = -1;
@@ -20,7 +20,7 @@ class Guard extends Actor{
 
 	private var vc:CanvasRenderingContext2D;
 
-	public function new(g:Game){
+	public function new(g:PlayRoom){
 		super(g.bsp, g.grid);
 		this.g = g;
 

@@ -32,7 +32,7 @@ class Main{
 		onResize();
 
 		c = canvas.getContext2d();
-		g = new Game(canvas, c);
+		g = new Game(c);
 		g.loadLevel(r.lvl[0]);
 
 		Browser.window.onmousedown = onMouseDown;
@@ -85,31 +85,31 @@ class Main{
 		};
 	}
 
-	public static function onMouseDown(e:MouseEvent){
+	private static function onMouseDown(e:MouseEvent){
 		e.preventDefault();
 		g.onMouseDown(getX(e.clientX), getY(e.clientY));
 	}
 
-	public static function onMouseUp(e:MouseEvent){
+	private static function onMouseUp(e:MouseEvent){
 		e.preventDefault();
 		g.onMouseUp(getX(e.clientX), getY(e.clientY));
 	}
 
-	public static function onMouseMove(e:MouseEvent){
+	private static function onMouseMove(e:MouseEvent){
 		e.preventDefault();
 		g.onMouseMove(getX(e.clientX), getY(e.clientY), scaleX(e.movementX), scaleY(e.movementY));
 	}
 
-	public static function onMouseWheel(e:WheelEvent){
+	private static function onMouseWheel(e:WheelEvent){
 		e.preventDefault();
 		g.zoom(getX(e.clientX), getY(e.clientY), e.deltaY * -0.1);
 	}
 
-	public static function onClick(e:MouseEvent){
+	private static function onClick(e:MouseEvent){
 		g.onClick(getX(e.clientX), getY(e.clientY));
 	}
 
-	public static function onTouchStart(e:TouchEvent){
+	private static function onTouchStart(e:TouchEvent){
 		if(e.touches.length == 1){
 			firstTouch = e.touches[0].identifier;
 			touchStart = e.timeStamp;
@@ -125,7 +125,7 @@ class Main{
 		}
 	}
 
-	public static function onTouchMove(e:TouchEvent){
+	private static function onTouchMove(e:TouchEvent){
 		e.preventDefault();
 
 		var pt = e.changedTouches[0];
@@ -144,7 +144,7 @@ class Main{
 		}
 	}
 
-	public static function onTouchEnd(e:TouchEvent){
+	private static function onTouchEnd(e:TouchEvent){
 		e.preventDefault();
 
 		var changed = e.changedTouches[0];
