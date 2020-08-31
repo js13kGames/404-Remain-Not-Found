@@ -3,6 +3,12 @@ package;
 import js.html.CanvasRenderingContext2D;
 
 class Room{
+	private var g:Game;
+
+	public function new(g:Game){
+		this.g = g;
+	}
+
 	public function update(c:CanvasRenderingContext2D, s:Float){
 
 	}

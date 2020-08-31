@@ -29,7 +29,9 @@ class PlayRoom extends Room{
 	private var actor:Array<Actor>;
 	private var currentActor:Int = -1;
 
-	public function new(c:CanvasRenderingContext2D){
+	public function new(g:Game, c:CanvasRenderingContext2D){
+		super(g);
+		
 		this.c = c;
 
 		walls = new Array<Wall>();

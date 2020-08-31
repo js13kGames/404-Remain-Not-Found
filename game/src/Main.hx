@@ -11,7 +11,7 @@ import js.html.CanvasElement;
 import js.Browser;
 
 class Main{
-	private static var r = ResourceBuilder.build();
+	public static var r(default, null) = ResourceBuilder.build();
 
 	private static var canvas:CanvasElement;
 
@@ -33,7 +33,6 @@ class Main{
 
 		c = canvas.getContext2d();
 		g = new Game(c);
-		g.loadLevel(r.lvl[0]);
 
 		Browser.window.onmousedown = onMouseDown;
 		Browser.window.onmouseup = onMouseUp;

@@ -1,17 +1,7 @@
 package;
 
 import math.Vec;
-import js.Browser;
-import js.html.CanvasElement;
-import actor.Guard;
-import actor.Actor;
-import math.Line;
-import math.AABB;
 import resources.LvlDef;
-import actor.Phase;
-import js.html.Element;
-import actor.Player;
-import astar.BspGrid;
 import js.html.CanvasRenderingContext2D;
 
 class Game{
@@ -23,10 +13,12 @@ class Game{
 	private var panning:Bool = false;
 	private var mouseStart:Vec = null;
 
-	private var r:Room = null;
+	private var r:Room;
 
 	public function new(c:CanvasRenderingContext2D){
 		this.c = c;
+
+		r = new MenuRoom(this);
 	}
 
 	public function update(s:Float){
@@ -84,7 +76,7 @@ class Game{
 	}
 
 	public function loadLevel(d:LvlDef){
-		var lr:PlayRoom = new PlayRoom(c);
+		var lr:PlayRoom = new PlayRoom(this, c);
 		lr.loadLevel(d);
 
 		r = lr;
