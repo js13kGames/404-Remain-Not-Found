@@ -1,5 +1,8 @@
 package;
 
+import math.Vec;
+import js.html.Touch;
+import js.html.TouchEvent;
 import resources.ResourceBuilder;
 import js.html.WheelEvent;
 import js.html.MouseEvent;
@@ -17,6 +20,11 @@ class Main{
 
 	public static var lastFrame:Float = 0;
 
+	private static var firstTouch:Int = -1;
+	private static var touchStart:Float = 0;
+	private static var pan:Vec = {x:0, y:0};
+	private static var lastPinch:Float = 0;
+
 	public static function main(){
 		canvas = cast Browser.window.document.getElementById("c");
 		Browser.window.document.body.onresize = onResize;
@@ -32,6 +40,9 @@ class Main{
 		Browser.window.onmousemove = onMouseMove;
 		Browser.window.onwheel = onMouseWheel;
 		Browser.window.onclick = onClick;
+		Browser.window.ontouchstart = onTouchStart;
+		Browser.window.ontouchmove = onTouchMove;
+		Browser.window.ontouchend = onTouchEnd;
 
 		Browser.window.requestAnimationFrame(update);
 	}
@@ -47,24 +58,46 @@ class Main{
 		canvas.style.top = Std.string(Math.floor((Browser.window.document.body.clientHeight - canvas.clientHeight) / 2)) + "px";
 	}
 
-	private static inline function getX(e:MouseEvent):Float{
-		return (e.clientX - canvas.offsetLeft) * (canvas.width / canvas.clientWidth);
+	private static inline function getX(clientX:Float):Float{
+		return (clientX - canvas.offsetLeft) * (canvas.width / canvas.clientWidth);
 	}
 
-	private static inline function getY(e:MouseEvent):Float{
-		return (e.clientY - canvas.offsetTop) * (canvas.height / canvas.clientHeight);
+	private static inline function getY(clientY:Float):Float{
+		return (clientY - canvas.offsetTop) * (canvas.height / canvas.clientHeight);
+	}
+
+	private static inline function scaleX(clientX:Float):Float{
+		return clientX * (canvas.width / canvas.clientWidth);
+	}
+
+	private static inline function scaleY(clientY:Float):Float{
+		return clientY * (canvas.height / canvas.clientHeight);
+	}
+
+	private static inline function touchDistance(a:Touch, b:Touch):Float{
+		return Math.sqrt(Math.pow(scaleX(a.clientX - b.clientX), 2) + Math.pow(scaleY(a.clientY - b.clientY), 2));
+	}
+
+	private static function touchCenter(a:Touch, b:Touch):Vec{
+		return {
+			x: a.clientX + (b.clientX - a.clientX) / 2,
+			y: a.clientY + (b.clientY - a.clientY) / 2
+		};
 	}
 
 	public static function onMouseDown(e:MouseEvent){
-		g.onMouseDown(getX(e), getY(e));
+		e.preventDefault();
+		g.onMouseDown(getX(e.clientX), getY(e.clientY));
 	}
 
 	public static function onMouseUp(e:MouseEvent){
-		g.onMouseUp(getX(e), getY(e));
+		e.preventDefault();
+		g.onMouseUp(getX(e.clientX), getY(e.clientY));
 	}
 
 	public static function onMouseMove(e:MouseEvent){
-		g.onMouseMove(getX(e), getY(e), e.movementX * (canvas.width / canvas.clientWidth), e.movementY * (canvas.height / canvas.clientHeight));
+		e.preventDefault();
+		g.onMouseMove(getX(e.clientX), getY(e.clientY), scaleX(e.movementX), scaleY(e.movementY));
 	}
 
 	public static function onMouseWheel(e:WheelEvent){
@@ -73,6 +106,55 @@ class Main{
 	}
 
 	public static function onClick(e:MouseEvent){
-		g.onClick(getX(e), getY(e));
+		g.onClick(getX(e.clientX), getY(e.clientY));
+	}
+
+	public static function onTouchStart(e:TouchEvent){
+		if(e.touches.length == 1){
+			firstTouch = e.touches[0].identifier;
+			touchStart = e.timeStamp;
+
+			pan.x = e.touches[0].clientX;
+			pan.y = e.touches[0].clientY;
+		}else{
+			firstTouch = -1;
+		}
+
+		if(e.touches.length == 2){
+			lastPinch = touchDistance(e.touches[0], e.touches[1]);
+		}
+	}
+
+	public static function onTouchMove(e:TouchEvent){
+		e.preventDefault();
+
+		var pt = e.changedTouches[0];
+
+		if(e.touches.length == 2){
+			var d:Float = touchDistance(e.touches[0], e.touches[1]);
+			var c:Vec = touchCenter(e.touches[0], e.touches[1]);
+
+			g.zoom(c.x, c.y, (d - lastPinch) * 0.01);
+
+			lastPinch = d;
+		}else if(e.touches.length == 1 && pt.identifier == firstTouch){
+			g.pan(scaleX(pt.clientX - pan.x), scaleY(pt.clientY - pan.y));
+			pan.x = pt.clientX;
+			pan.y = pt.clientY;
+		}
+	}
+
+	public static function onTouchEnd(e:TouchEvent){
+		e.preventDefault();
+
+		var changed = e.changedTouches[0];
+
+		if(changed.identifier == firstTouch){
+			if(e.timeStamp - touchStart < 500){
+				g.onClick(getX(changed.clientX), getY(changed.clientY));
+			}
+
+			firstTouch = -1;
+		}
 	}
 }

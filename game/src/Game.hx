@@ -1,5 +1,6 @@
 package;
 
+import math.Vec;
 import js.Browser;
 import js.html.CanvasElement;
 import actor.Guard;
@@ -9,13 +10,14 @@ import math.AABB;
 import resources.LvlDef;
 import actor.Phase;
 import js.html.WheelEvent;
-import astar.Point;
 import js.html.Element;
 import actor.Player;
 import astar.BspGrid;
 import js.html.CanvasRenderingContext2D;
 
 class Game{
+	private static inline var PAN_START_DISTANCE:Float = 10;
+
 	private var c:CanvasRenderingContext2D;
 	private var ec:Array<CanvasRenderingContext2D>;
 
@@ -26,7 +28,8 @@ class Game{
 
 	private var isMouseDown:Bool = false;
 	private var panning:Bool = false;
-	private var mouseStart:Point = null;
+	private var mouseStart:Vec = null;
+	private var mousePos:Vec;
 	private var mouseX:Float = 0;
 	private var mouseY:Float = 0;
 
@@ -45,6 +48,11 @@ class Game{
 		walls = new Array<Wall>();
 		player = new Array<Player>();
 		actor = new Array<Actor>();
+
+		mousePos = {
+			x: 0.0,
+			y: 0.0
+		}
 	}
 
 	public function update(s:Float){
@@ -111,6 +119,11 @@ class Game{
 	public function onMouseDown(x:Float, y:Float){
 		isMouseDown = true;
 		panning = false;
+
+		mouseStart = {
+			x: x,
+			y: y
+		};
 	}
 
 	public function onMouseUp(x:Float, y:Float){
@@ -122,23 +135,36 @@ class Game{
 		mouseY = y;
 
 		if(isMouseDown){
-			viewX += dx;
-			viewY += dy;
-			panning = true;
+			if(Math.sqrt(Math.pow(x - mouseStart.x, 2) + Math.pow(y - mouseStart.y, 2)) > PAN_START_DISTANCE){
+				panning = true;
+			}
+
+			if(panning){
+				pan(dx, dy);
+			}
 		}
 	}
 
-	public function onMouseWheel(e:WheelEvent){
-		var sx = (mouseX - viewX) / viewZoom;
-		var sy = (mouseY - viewY) / viewZoom;
+	public function pan(dx:Float, dy:Float){
+		viewX += dx;
+		viewY += dy;
+	}
 
-		viewZoom += e.deltaY * -0.1;
+	public function onMouseWheel(e:WheelEvent){
+		zoom(mouseX, mouseY, e.deltaY * -0.1);
+	}
+
+	public function zoom(cx:Float, cy:Float, s:Float){
+		var sx = (cx - viewX) / viewZoom;
+		var sy = (cy - viewY) / viewZoom;
+
+		viewZoom += s;
 		if(viewZoom <= 0){
 			viewZoom = 0.1;
 		}
 
-		viewX += (((mouseX - viewX) / viewZoom) - sx) * viewZoom;
-		viewY += (((mouseY - viewY) / viewZoom) - sy) * viewZoom;
+		viewX += (((cx - viewX) / viewZoom) - sx) * viewZoom;
+		viewY += (((cy - viewY) / viewZoom) - sy) * viewZoom;
 	}
 
 	public function onClick(x:Float, y:Float){
