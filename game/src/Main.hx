@@ -102,7 +102,7 @@ class Main{
 
 	public static function onMouseWheel(e:WheelEvent){
 		e.preventDefault();
-		g.onMouseWheel(e);
+		g.zoom(getX(e.clientX), getY(e.clientY), e.deltaY * -0.1);
 	}
 
 	public static function onClick(e:MouseEvent){

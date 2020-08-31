@@ -9,7 +9,6 @@ import math.Line;
 import math.AABB;
 import resources.LvlDef;
 import actor.Phase;
-import js.html.WheelEvent;
 import js.html.Element;
 import actor.Player;
 import astar.BspGrid;
@@ -30,8 +29,6 @@ class Game{
 	private var panning:Bool = false;
 	private var mouseStart:Vec = null;
 	private var mousePos:Vec;
-	private var mouseX:Float = 0;
-	private var mouseY:Float = 0;
 
 	public var grid(default, null):Float;
 	public var bsp(default, null):BspGrid = null;
@@ -131,9 +128,6 @@ class Game{
 	}
 
 	public function onMouseMove(x:Float, y:Float, dx:Float, dy:Float){
-		mouseX = x;
-		mouseY = y;
-
 		if(isMouseDown){
 			if(Math.sqrt(Math.pow(x - mouseStart.x, 2) + Math.pow(y - mouseStart.y, 2)) > PAN_START_DISTANCE){
 				panning = true;
@@ -148,10 +142,6 @@ class Game{
 	public function pan(dx:Float, dy:Float){
 		viewX += dx;
 		viewY += dy;
-	}
-
-	public function onMouseWheel(e:WheelEvent){
-		zoom(mouseX, mouseY, e.deltaY * -0.1);
 	}
 
 	public function zoom(cx:Float, cy:Float, s:Float){
