@@ -1,5 +1,6 @@
 package;
 
+import menu.MenuRoom;
 import math.Vec;
 import resources.LvlDef;
 import js.html.CanvasRenderingContext2D;
@@ -18,7 +19,7 @@ class Game{
 	public function new(c:CanvasRenderingContext2D){
 		this.c = c;
 
-		r = new MenuRoom(this);
+		menu();
 	}
 
 	public function update(s:Float){
@@ -80,5 +81,9 @@ class Game{
 		lr.loadLevel(d);
 
 		r = lr;
+	}
+
+	public function menu(){
+		r = new MenuRoom(this);
 	}
 }

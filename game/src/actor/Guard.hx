@@ -52,7 +52,11 @@ class Guard extends Actor{
 
 		canSeePlayer = false;
 		for(p in g.player){
-			canSeePlayer = canSeePlayer || canSee(p.x, p.y);
+			if(canSee(p.x, p.y)){
+				canSeePlayer = true;
+				resetNav();
+				g.spotted(this, p);
+			}
 		}
 	}
 

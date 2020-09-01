@@ -1,5 +1,6 @@
 package;
 
+import menu.MenuPage;
 import js.Browser;
 import js.html.CanvasElement;
 import math.Line;
@@ -16,6 +17,8 @@ class PlayRoom extends Room{
 	private var c:CanvasRenderingContext2D;
 	private var ec:Array<CanvasRenderingContext2D> = new Array<CanvasRenderingContext2D>();
 
+	private var lvl:LvlDef = null;
+
 	private var viewX:Float = 0;
 	private var viewY:Float = 0;
 	private var viewZoom:Float = 1;
@@ -29,6 +32,11 @@ class PlayRoom extends Room{
 	private var actor:Array<Actor>;
 	private var currentActor:Int = -1;
 
+	private var delay:Float = -1;
+	private var delayAction:Void->Void;
+
+	private var menu:MenuPage = null;
+
 	public function new(g:Game, c:CanvasRenderingContext2D){
 		super(g);
 		
@@ -41,6 +49,14 @@ class PlayRoom extends Room{
 
 	override function update(c:CanvasRenderingContext2D, s:Float) {
 		super.update(c, s);
+
+		if(delay != -1){
+			delay -= s;
+			if(delay <= 0){
+				delay = -1;
+				delayAction();
+			}
+		}
 
 		if(currentActor != -1){
 			if(actor[currentActor].phase == Phase.TURN_END){
@@ -100,6 +116,14 @@ class PlayRoom extends Room{
 		}
 	
 		c.restore();
+
+		if(menu != null){
+
+			c.fillStyle = "#00000088";
+			c.fillRect(c.canvas.width * 0.25, c.canvas.height * 0.125, c.canvas.width * 0.5, c.canvas.height * 0.75);
+
+			menu.render(c);
+		}
 	}
 
 	override function pan(dx:Float, dy:Float) {
@@ -130,9 +154,22 @@ class PlayRoom extends Room{
 		for(p in player){
 			p.click((x - viewX) / viewZoom, (y - viewY) / viewZoom);
 		}
+
+		if(menu != null){
+			menu.click(x, y);
+		}
+	}
+
+	override function mouseMove(x:Float, y:Float) {
+		super.mouseMove(x, y);
+
+		if(menu != null){
+			menu.mouseMove(x, y);
+		}
 	}
 
 	public function loadLevel(d:LvlDef){
+		this.lvl = d;
 		ec = new Array<CanvasRenderingContext2D>();
 
 		grid = d.g;
@@ -212,5 +249,32 @@ class PlayRoom extends Room{
 		ec.push(cc);
 
 		return cc;
+	}
+
+	public function spotted(a:Actor, b:Actor){
+		if(currentActor != -1){
+			currentActor = -1;
+
+			delay = 1;
+			delayAction = function(){
+				showMenu("Found!");
+			}
+		}
+	}
+
+	private function showMenu(reason:String){
+		var cw = c.canvas.width;
+		var ch = c.canvas.height;
+
+		menu = new MenuPage(reason);
+		menu.x = cw / 2;
+		menu.y = ch * 0.25;
+		menu.add("Retry", cw / 2, ch / 2, function(){
+			menu = null;
+			loadLevel(lvl);
+		});
+		menu.add("Exit to menu", cw / 2, ch * 0.75, function(){
+			g.menu();
+		});
 	}
 }

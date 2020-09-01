@@ -1,4 +1,4 @@
-package;
+package menu;
 
 import js.Browser;
 import js.html.CanvasRenderingContext2D;

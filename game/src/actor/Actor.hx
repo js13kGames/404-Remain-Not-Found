@@ -54,4 +54,12 @@ class Actor extends Entity{
 	override function render(c:CanvasRenderingContext2D){
 		super.render(c);
 	}
+
+	public function resetNav(){
+		navNodes = [];
+		navIndex = 0;
+		navSpeed = 0;
+		xSpeed = 0;
+		ySpeed = 0;
+	}
 }
