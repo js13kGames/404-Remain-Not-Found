@@ -47,6 +47,7 @@ class ResourceBuilder{
 		var wallLayer = findObject(tiled.layers, "wall");
 		var playerLayer = findObject(tiled.layers, "player");
 		var enemyLayer = findObject(tiled.layers, "enemy");
+		var goalLayer = findObject(tiled.layers, "goal");
 
 		return {
 			g: tiled.tilewidth,
@@ -54,8 +55,9 @@ class ResourceBuilder{
 			h: tiled.height,
 			wl: buildWalls(wallLayer.objects),
 			en: buildEnemies(enemyLayer.objects),
-			pl: buildPlayers(playerLayer.objects)
-		}
+			pl: buildPlayers(playerLayer.objects),
+			gl: buildGoals(goalLayer.objects)
+		};
 	}
 
 	private static function findObject(list:Array<Dynamic>, name:String):Dynamic{
@@ -143,6 +145,34 @@ class ResourceBuilder{
 		}
 
 		return res;
+	}
+
+	private static function buildGoals(goalObjects:Array<Dynamic>):Array<GoalDef>{
+		var res:Array<GoalDef> = new Array<GoalDef>();
+		for(o in goalObjects){
+			res.push(makeGoal(o));
+		}
+
+		return res;
+	}
+
+	private static function makeGoal(goalObject:Dynamic):GoalDef{
+		return {
+			x: goalObject.x,
+			y: goalObject.y,
+			w: goalObject.width,
+			h: goalObject.height,
+			l: getProperty(goalObject.properties, "level")
+		}
+	}
+
+	private static function getProperty<T>(props:Array<Dynamic>, name:String):T{
+		for(p in props){
+			if(p.name == name){
+				return p.value;
+			}
+		}
+		return null;
 	}
 
 	#end

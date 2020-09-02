@@ -198,6 +198,118 @@
                  "width":0,
                  "x":1056,
                  "y":192
+                }, 
+                {
+                 "height":0,
+                 "id":23,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":-32
+                        }, 
+                        {
+                         "x":1248,
+                         "y":-32
+                        }, 
+                        {
+                         "x":1248,
+                         "y":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":32,
+                         "y":0
+                        }, 
+                        {
+                         "x":32,
+                         "y":704
+                        }, 
+                        {
+                         "x":0,
+                         "y":704
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1248,
+                 "y":-32
+                }, 
+                {
+                 "height":0,
+                 "id":25,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":-1280,
+                         "y":0
+                        }, 
+                        {
+                         "x":-1280,
+                         "y":-32
+                        }, 
+                        {
+                         "x":0,
+                         "y":-32
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1280,
+                 "y":704
+                }, 
+                {
+                 "height":0,
+                 "id":26,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":-736
+                        }, 
+                        {
+                         "x":-32,
+                         "y":-736
+                        }, 
+                        {
+                         "x":-32,
+                         "y":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":0,
+                 "y":704
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -215,6 +327,12 @@
                  "height":128,
                  "id":18,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"level",
+                         "type":"int",
+                         "value":-1
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -386,7 +504,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":19,
+ "nextobjectid":27,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.2",

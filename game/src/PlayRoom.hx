@@ -27,6 +27,7 @@ class PlayRoom extends Room{
 	public var grid(default, null):Float;
 	public var bsp(default, null):BspGrid = null;
 	public var walls(default, null):Array<Wall>;
+	public var goals(default, null):Array<Goal>;
 
 	public var player(default, null):Array<Player>;
 	private var actor:Array<Actor>;
@@ -45,6 +46,7 @@ class PlayRoom extends Room{
 		walls = new Array<Wall>();
 		player = new Array<Player>();
 		actor = new Array<Actor>();
+		goals = new Array<Goal>();
 	}
 
 	override function update(c:CanvasRenderingContext2D, s:Float) {
@@ -58,12 +60,22 @@ class PlayRoom extends Room{
 			}
 		}
 
+		for(g in goals){
+			g.update(s);
+		}
+
 		if(currentActor != -1){
 			if(actor[currentActor].phase == Phase.TURN_END){
-				actor[currentActor].phase = Phase.IDLE;
-				currentActor = (currentActor + 1 >= actor.length) ? 0 : currentActor + 1;
-	
-				actor[currentActor].phase = Phase.TURN_START;
+				var l:Int = checkGoal();
+				if(l == -1){
+					actor[currentActor].phase = Phase.IDLE;
+					currentActor = (currentActor + 1 >= actor.length) ? 0 : currentActor + 1;
+		
+					actor[currentActor].phase = Phase.TURN_START;
+				}else{
+					currentActor = -1;
+					// TODO begin transition
+				}
 			}
 		}
 	
@@ -109,6 +121,10 @@ class PlayRoom extends Room{
 			if(viewAABB.check(w.aabb)){
 				w.render(c);
 			}
+		}
+
+		for(g in goals){
+			g.render(c);
 		}
 	
 		for(a in actor){
@@ -215,6 +231,11 @@ class PlayRoom extends Room{
 			actor[0].phase = Phase.TURN_START;
 		}
 
+		goals = new Array<Goal>();
+		for(g in d.gl){
+			goals.push(new Goal(g.x, g.y, g.w, g.h, g.l, this));
+		}
+
 	}
 
 	private inline function addWallToBsp(bsp:BspGrid, wall:Wall){
@@ -276,5 +297,15 @@ class PlayRoom extends Room{
 		menu.add("Exit to menu", cw / 2, ch * 0.75, function(){
 			g.menu();
 		});
+	}
+
+	private function checkGoal(){
+		for(g in goals){
+			if(g.p == player.length){
+				return g.l;
+			}
+		}
+
+		return -1;
 	}
 }

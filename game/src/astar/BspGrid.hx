@@ -29,6 +29,9 @@ class BspGrid{
 	}
 
 	public function set(x:Int, y:Int, filled:Bool){
+		if(x < 0 || x + 1 > w || y < 0 || y + 1 > h){
+			return;
+		}
 		space[x][y] = filled;
 	}
 }

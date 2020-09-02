@@ -20,6 +20,10 @@ class Player extends Actor{
 			dstFillCurrent = true;
 		}
 		
+		aabb.x = x - gridSize / 2;
+		aabb.y = y - gridSize / 2;
+		aabb.w = gridSize;
+		aabb.h = gridSize;
 	}
 
 	override function render(c:CanvasRenderingContext2D){
