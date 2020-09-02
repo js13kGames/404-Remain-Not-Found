@@ -11,8 +11,6 @@ class Guard extends Actor{
 	private static inline var FOV:Float = 3.14159 * 0.175;
 	private static inline var VIEW_DIST:Float = 512;
 
-	private var g:PlayRoom;
-
 	public var ptrl(default, null):Array<Point>;
 	private var ptrlIdx:Int = -1;
 
@@ -20,9 +18,11 @@ class Guard extends Actor{
 
 	private var vc:CanvasRenderingContext2D;
 
+	private var alrt:Point = null;
+	private var rtn:Bool = false;
+
 	public function new(g:PlayRoom){
-		super(g.bsp, g.grid);
-		this.g = g;
+		super(g);
 
 		ptrl = new Array<Point>();
 		vc = g.newCanvas();
@@ -32,22 +32,11 @@ class Guard extends Actor{
 		super.update(s);
 
 		if(phase == Phase.TURN_START){
-			if(ptrl.length == 0){
-				phase = Phase.TURN_END;
+			if(alrt != null || rtn){
+				alertUpdate();
+			}else{
+				patrolUpdate();
 			}
-
-			var sx = Math.floor(this.x / gridSize);
-			var sy = Math.floor(this.y / gridSize);
-
-			ptrlIdx += 1;
-			if(ptrlIdx >= ptrl.length){
-				ptrlIdx = 0;
-			}
-
-			navNodes = Path.fromPoints(dst.route(sx, sy, ptrl[ptrlIdx].x, ptrl[ptrlIdx].y, 50), gridSize, true);
-			navIndex = 0;
-			navSpeed = 128;
-			phase = Phase.MOVING;
 		}
 
 		canSeePlayer = false;
@@ -57,6 +46,59 @@ class Guard extends Actor{
 				resetNav();
 				g.spotted(this, p);
 			}
+		}
+
+		for(s in g.snd){
+			if(s.alive && LcMath.dist(s.x, s.y, x, y) < (gridSize / 2) + s.r){
+				alrt = {
+					x: Math.floor(s.x / gridSize),
+					y: Math.floor(s.y / gridSize)
+				};
+			}
+		}
+	}
+
+	private inline function patrolUpdate(){
+		if(ptrl.length == 0){
+			phase = Phase.TURN_END;
+		}
+
+		var sx = Math.floor(this.x / gridSize);
+		var sy = Math.floor(this.y / gridSize);
+
+		ptrlIdx += 1;
+		if(ptrlIdx >= ptrl.length){
+			ptrlIdx = 0;
+		}
+
+		navNodes = Path.fromPoints(dst.route(sx, sy, ptrl[ptrlIdx].x, ptrl[ptrlIdx].y, 50), gridSize, true);
+		navIndex = 0;
+		navSpeed = 128;
+		phase = Phase.MOVING;
+	}
+
+	private inline function alertUpdate(){
+		var ex = alrt == null ? ptrl[ptrlIdx].x : alrt.x;
+		var ey = alrt == null ? ptrl[ptrlIdx].y : alrt.y;
+
+		var sx = Math.floor(this.x / gridSize);
+		var sy = Math.floor(this.y / gridSize);
+
+		if(sx == ex && sy == ey){
+			rtn = !rtn;
+			alrt = null;
+		}else{
+			var pts:Array<Point> = dst.route(sx, sy, ex, ey, 100);
+			var max:Int = Math.floor(Math.min(pts.length, 5));
+			var navPts:Array<Point> = new Array<Point>();
+			for(i in 0...max){
+				navPts.push(pts[i]);
+			}
+
+			navNodes = Path.fromPoints(navPts, gridSize, true);
+			navIndex = 0;
+			navSpeed = 128;
+			phase = Phase.MOVING;
 		}
 	}
 
@@ -112,5 +154,10 @@ class Guard extends Actor{
 		}
 
 		c.drawImage(vc.canvas, 0, 0);
+
+		if(alrt != null){
+			c.fillStyle = "#FF0";
+			c.fillText("?", x, y);
+		}
 	}
 }

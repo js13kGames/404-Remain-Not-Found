@@ -8,8 +8,8 @@ class Player extends Actor{
 	private static inline var MAX_MOVE:Int = 10;
 	private var dstFillCurrent:Bool = false;
 
-	public function new(bsp:BspGrid, gridSize:Float){
-		super(bsp, gridSize);
+	public function new(g:PlayRoom){
+		super(g);
 	}
 
 	override function update(s:Float) {
@@ -93,5 +93,11 @@ class Player extends Actor{
 				dstFillCurrent = false;
 			}
 		}
+	}
+
+	override function step() {
+		super.step();
+
+		g.makeSnd(x, y, 10);
 	}
 }

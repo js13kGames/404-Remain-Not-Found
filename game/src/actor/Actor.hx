@@ -6,6 +6,9 @@ import js.html.CanvasRenderingContext2D;
 import astar.BspGrid;
 
 class Actor extends Entity{
+	private static inline var STEP_SCALE:Float = 38;
+
+	private var g:PlayRoom;
 	private var bsp:BspGrid;
 	private var gridSize:Float;
 
@@ -16,10 +19,13 @@ class Actor extends Entity{
 	private var navIndex:Int = 0;
 	private var navSpeed:Float = 0;
 
-	public function new(bsp:BspGrid, gridSize:Float){
+	private var stp:Float = 0;
+
+	public function new(g:PlayRoom){
 		super();
-		this.bsp = bsp;
-		this.gridSize = gridSize;
+		this.g = g;
+		this.bsp = g.bsp;
+		this.gridSize = g.grid;
 
 		this.phase = Phase.IDLE;
 		this.dst = new DistGrid(bsp);
@@ -45,6 +51,12 @@ class Actor extends Entity{
 				var dir:Float = Math.atan2(node.y - y, node.x - x);
 				xSpeed = Math.cos(dir) * navSpeed;
 				ySpeed = Math.sin(dir) * navSpeed;
+
+				stp -= s;
+				if(stp <= 0){
+					step();
+					stp = STEP_SCALE / navSpeed;
+				}
 			}
 		}else if(phase == Phase.MOVING){
 			phase = Phase.TURN_END;
@@ -61,5 +73,9 @@ class Actor extends Entity{
 		navSpeed = 0;
 		xSpeed = 0;
 		ySpeed = 0;
+	}
+
+	private function step(){
+
 	}
 }

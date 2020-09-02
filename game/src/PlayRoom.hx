@@ -33,6 +33,8 @@ class PlayRoom extends Room{
 	private var actor:Array<Actor>;
 	private var currentActor:Int = -1;
 
+	public var snd(default, null):Array<Sound>;
+
 	private var delay:Float = -1;
 	private var delayAction:Void->Void;
 
@@ -47,6 +49,7 @@ class PlayRoom extends Room{
 		player = new Array<Player>();
 		actor = new Array<Actor>();
 		goals = new Array<Goal>();
+		snd = new Array<Sound>();
 	}
 
 	override function update(c:CanvasRenderingContext2D, s:Float) {
@@ -81,6 +84,10 @@ class PlayRoom extends Room{
 	
 		for(a in actor){
 			a.update(s);
+		}
+
+		for(sn in snd){
+			sn.update(s);
 		}
 	
 		c.fillStyle = "#AAA";
@@ -126,15 +133,18 @@ class PlayRoom extends Room{
 		for(g in goals){
 			g.render(c);
 		}
+
+		for(s in snd){
+			s.render(c);
+		}
 	
 		for(a in actor){
 			a.render(c);
 		}
-	
+
 		c.restore();
 
 		if(menu != null){
-
 			c.fillStyle = "#00000088";
 			c.fillRect(c.canvas.width * 0.25, c.canvas.height * 0.125, c.canvas.width * 0.5, c.canvas.height * 0.75);
 
@@ -202,7 +212,7 @@ class PlayRoom extends Room{
 
 		player = new Array<Player>();
 		for(p in d.pl){
-			var pl = new Player(bsp, grid);
+			var pl = new Player(this);
 			pl.x = p.x;
 			pl.y = p.y;
 			pl.phase = Phase.IDLE;
@@ -236,6 +246,9 @@ class PlayRoom extends Room{
 			goals.push(new Goal(g.x, g.y, g.w, g.h, g.l, this));
 		}
 
+		for(s in snd){
+			s.kill();
+		}
 	}
 
 	private inline function addWallToBsp(bsp:BspGrid, wall:Wall){
@@ -307,5 +320,22 @@ class PlayRoom extends Room{
 		}
 
 		return -1;
+	}
+
+	public function makeSnd(x:Float, y:Float, v:Float){
+		var ns:Sound = null;
+		for(s in snd){
+			if(!s.alive){
+				ns = s;
+				break;
+			}
+		}
+
+		if(ns == null){
+			ns = new Sound();
+			snd.push(ns);
+		}
+
+		ns.init(x, y, v);
 	}
 }
