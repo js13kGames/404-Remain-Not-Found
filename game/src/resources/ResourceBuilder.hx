@@ -54,7 +54,7 @@ class ResourceBuilder{
 			w: tiled.width,
 			h: tiled.height,
 			wl: buildWalls(wallLayer.objects),
-			en: buildEnemies(enemyLayer.objects),
+			en: enemyLayer == null ? [] : buildEnemies(enemyLayer.objects),
 			pl: buildPlayers(playerLayer.objects),
 			gl: buildGoals(goalLayer.objects)
 		};

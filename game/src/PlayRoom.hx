@@ -78,6 +78,7 @@ class PlayRoom extends Room{
 				}else{
 					currentActor = -1;
 					// TODO begin transition
+					g.loadLevel(Main.r.lvl[l]);
 				}
 			}
 		}
