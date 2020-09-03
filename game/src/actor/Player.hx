@@ -1,11 +1,14 @@
 package actor;
 
+import math.LcMath;
 import path.Path;
-import astar.BspGrid;
 import js.html.CanvasRenderingContext2D;
 
 class Player extends Actor{
 	private static inline var MAX_MOVE:Int = 10;
+	private static inline var MIN_NAV_SPEED = 100;
+	private static inline var NAV_SPEED_MULTIPLIER = 15;
+
 	private var dstFillCurrent:Bool = false;
 
 	public function new(g:PlayRoom){
@@ -85,7 +88,7 @@ class Player extends Actor{
 
 			navNodes = Path.fromPoints(dst.route(sx, sy, ex, ey, MAX_MOVE), gridSize, true);
 			navIndex = 0;
-			navSpeed = 128;
+			navSpeed = MIN_NAV_SPEED + navNodes.length * NAV_SPEED_MULTIPLIER;
 
 			if(navNodes.length > 0)
 			{
@@ -98,6 +101,8 @@ class Player extends Actor{
 	override function step() {
 		super.step();
 
-		g.makeSnd(x, y, 10);
+		var sp = LcMath.dist(0, 0, xSpeed, ySpeed);
+
+		g.makeSnd(x, y, 10 + (sp - MIN_NAV_SPEED) * 0.2);
 	}
 }
