@@ -78,4 +78,8 @@ class Actor extends Entity{
 	private function step(){
 
 	}
+
+	public function isPlayer():Bool{
+		return false;
+	}
 }

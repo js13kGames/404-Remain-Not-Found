@@ -1,5 +1,6 @@
 package;
 
+import menu.Button;
 import menu.MenuPage;
 import js.Browser;
 import js.html.CanvasElement;
@@ -40,6 +41,8 @@ class PlayRoom extends Room{
 
 	private var menu:MenuPage = null;
 
+	private var distractBtn:Button;
+
 	public function new(g:Game, c:CanvasRenderingContext2D){
 		super(g);
 		
@@ -50,6 +53,8 @@ class PlayRoom extends Room{
 		actor = new Array<Actor>();
 		goals = new Array<Goal>();
 		snd = new Array<Sound>();
+
+		distractBtn = new Button(20, c.canvas.height - 70, "👏", distract);
 	}
 
 	override function update(c:CanvasRenderingContext2D, s:Float) {
@@ -151,6 +156,9 @@ class PlayRoom extends Room{
 
 			menu.render(c);
 		}
+		else if(isPlayerTurn()){
+			distractBtn.render(c);
+		}
 	}
 
 	override function pan(dx:Float, dy:Float) {
@@ -184,6 +192,8 @@ class PlayRoom extends Room{
 
 		if(menu != null){
 			menu.click(x, y);
+		}else if(isPlayerTurn()){
+			distractBtn.click(x, y);
 		}
 	}
 
@@ -192,6 +202,8 @@ class PlayRoom extends Room{
 
 		if(menu != null){
 			menu.mouseMove(x, y);
+		}else if(actor[currentActor].isPlayer()){
+			distractBtn.mouseMove(x, y);
 		}
 	}
 
@@ -338,5 +350,14 @@ class PlayRoom extends Room{
 		}
 
 		ns.init(x, y, v);
+	}
+
+	private function distract(){
+		var a = actor[currentActor];
+		makeSnd(a.x, a.y, 50);
+	}
+
+	private inline function isPlayerTurn(){
+		return currentActor != -1 && actor[currentActor].isPlayer();
 	}
 }

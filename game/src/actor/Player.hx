@@ -105,4 +105,8 @@ class Player extends Actor{
 
 		g.makeSnd(x, y, 10 + (sp - MIN_NAV_SPEED) * 0.2);
 	}
+
+	override function isPlayer():Bool {
+		return true;
+	}
 }

@@ -33,6 +33,10 @@ class DistGrid{
 	}
 
 	public function route(sx:Int, sy:Int, ex:Int, ey:Int, max:Int):Array<Point>{
+		if(!inBounds(sx, sy) || !inBounds(ex, ey)){
+			return new Array<Point>();
+		}
+
 		if(space[sx][sy] != 0){
 			fillFrom(sx, sy, max);
 		}
@@ -146,8 +150,12 @@ class DistGrid{
 		}
 	}
 
+	private inline function inBounds(x:Int, y:Int){
+		return !(x < 0 || x >= bsp.w || y < 0 || y >= bsp.h);
+	}
+
 	public function get(x:Int, y:Int):Float{
-		if(x < 0 || x >= bsp.w || y < 0 || y >= bsp.h){
+		if(!inBounds(x, y)){
 			return -1;
 		}
 		
