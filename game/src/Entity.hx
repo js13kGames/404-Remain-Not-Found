@@ -13,7 +13,7 @@ class Entity{
 
 	public var aabb(default, null):AABB;
 
-	public var dir(default, null):Float = 0;
+	public var dir(default, default):Float = 0;
 
 	public function new(){
 		x = 0;

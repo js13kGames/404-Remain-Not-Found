@@ -23,7 +23,6 @@ class PlayRoom extends Room{
 	private var viewX:Float = 0;
 	private var viewY:Float = 0;
 	private var viewZoom:Float = 1;
-	private var viewAABB:AABB = new AABB();
 
 	public var grid(default, null):Float;
 	public var bsp(default, null):BspGrid = null;
@@ -106,12 +105,7 @@ class PlayRoom extends Room{
 		for(i in ec){
 			i.clearRect(0, 0, i.canvas.width, i.canvas.height);
 		}
-	
-		viewAABB.x = -viewX / viewZoom;
-		viewAABB.y = -viewY / viewZoom;
-		viewAABB.w = c.canvas.width / viewZoom;
-		viewAABB.h = c.canvas.height / viewZoom;
-	
+
 		c.strokeStyle = "#FFF";
 	
 		if(bsp != null){
@@ -131,9 +125,7 @@ class PlayRoom extends Room{
 		}
 	
 		for(w in walls){
-			if(viewAABB.check(w.aabb)){
-				w.render(c);
-			}
+			w.render(c);
 		}
 
 		for(g in goals){
@@ -238,6 +230,7 @@ class PlayRoom extends Room{
 			var en = new Guard(this);
 			en.x = e.x;
 			en.y = e.y;
+			en.dir = e.a;
 
 			for(n in e.nav){
 				en.ptrl.push({
@@ -262,6 +255,12 @@ class PlayRoom extends Room{
 		for(s in snd){
 			s.kill();
 		}
+
+		var rw:Float = d.w * grid;
+		var rh:Float = d.h * grid;
+
+		viewX = (c.canvas.width / 2) - (rw / 2);
+		viewY = (c.canvas.height / 2) - (rh / 2);
 	}
 
 	private inline function addWallToBsp(bsp:BspGrid, wall:Wall){

@@ -20,6 +20,8 @@ class Guard extends Actor{
 
 	private var alrt:Point = null;
 	private var rtn:Bool = false;
+	private var rtnPoint:Point = null;
+	private var rtnDir:Float = 0;
 
 	public function new(g:PlayRoom){
 		super(g);
@@ -54,6 +56,11 @@ class Guard extends Actor{
 					x: Math.floor(s.x / gridSize),
 					y: Math.floor(s.y / gridSize)
 				};
+				rtnPoint = {
+					x: Math.floor(x / gridSize),
+					y: Math.floor(y / gridSize)
+				}
+				rtnDir = dir;
 			}
 		}
 	}
@@ -61,6 +68,7 @@ class Guard extends Actor{
 	private inline function patrolUpdate(){
 		if(ptrl.length == 0){
 			phase = Phase.TURN_END;
+			return;
 		}
 
 		var sx = Math.floor(this.x / gridSize);
@@ -78,8 +86,8 @@ class Guard extends Actor{
 	}
 
 	private inline function alertUpdate(){
-		var ex = alrt == null ? ptrl[ptrlIdx].x : alrt.x;
-		var ey = alrt == null ? ptrl[ptrlIdx].y : alrt.y;
+		var ex = alrt == null ? rtnPoint.x : alrt.x;
+		var ey = alrt == null ? rtnPoint.y : alrt.y;
 
 		var sx = Math.floor(this.x / gridSize);
 		var sy = Math.floor(this.y / gridSize);
@@ -87,6 +95,7 @@ class Guard extends Actor{
 		if(sx == ex && sy == ey){
 			rtn = !rtn;
 			alrt = null;
+			dir = rtnDir;
 		}else{
 			var pts:Array<Point> = dst.route(sx, sy, ex, ey, 100);
 			var max:Int = Math.floor(Math.min(pts.length, 5));

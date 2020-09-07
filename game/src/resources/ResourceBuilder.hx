@@ -53,10 +53,10 @@ class ResourceBuilder{
 			g: tiled.tilewidth,
 			w: tiled.width,
 			h: tiled.height,
-			wl: buildWalls(wallLayer.objects),
+			wl: wallLayer == null ? [] : buildWalls(wallLayer.objects),
 			en: enemyLayer == null ? [] : buildEnemies(enemyLayer.objects),
-			pl: buildPlayers(playerLayer.objects),
-			gl: buildGoals(goalLayer.objects)
+			pl: playerLayer == null ? [] : buildPlayers(playerLayer.objects),
+			gl: goalLayer == null ? [] : buildGoals(goalLayer.objects)
 		};
 	}
 
@@ -121,10 +121,12 @@ class ResourceBuilder{
 			if(e.exists(enemyName)){
 				enemy = e[enemyName];
 			}else{
+				var angle = (getProperty(i.properties, "angle", 0) / 180) * Math.PI;
 				enemy = {
 					x: 0.0,
 					y: 0.0,
-					nav: new Array<Array<Float>>()
+					nav: new Array<Array<Float>>(),
+					a: angle
 				};
 				e.set(enemyName, enemy);
 			}
@@ -162,17 +164,22 @@ class ResourceBuilder{
 			y: goalObject.y,
 			w: goalObject.width,
 			h: goalObject.height,
-			l: getProperty(goalObject.properties, "level")
+			l: getProperty(goalObject.properties, "level", -1)
 		}
 	}
 
-	private static function getProperty<T>(props:Array<Dynamic>, name:String):T{
+	private static function getProperty<T>(props:Array<Dynamic>, name:String, def:T = null):T{
+		if(props == null){
+			return def;
+		}
+
 		for(p in props){
 			if(p.name == name){
 				return p.value;
 			}
 		}
-		return null;
+
+		return def;
 	}
 
 	#end
