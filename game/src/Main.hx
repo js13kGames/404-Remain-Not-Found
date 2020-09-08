@@ -1,5 +1,7 @@
 package;
 
+import js.html.URLSearchParams;
+import js.html.URL;
 import math.Vec;
 import js.html.Touch;
 import js.html.TouchEvent;
@@ -42,6 +44,11 @@ class Main{
 		Browser.window.ontouchstart = onTouchStart;
 		Browser.window.ontouchmove = onTouchMove;
 		Browser.window.ontouchend = onTouchEnd;
+
+		var p = new URLSearchParams(Browser.window.location.search);
+		if(p.has("l")){
+			g.loadLevel(r.lvl[Std.parseInt(p.get("l"))]);
+		}
 
 		Browser.window.requestAnimationFrame(update);
 	}

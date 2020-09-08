@@ -194,7 +194,7 @@ class PlayRoom extends Room{
 
 		if(menu != null){
 			menu.mouseMove(x, y);
-		}else if(actor[currentActor].isPlayer()){
+		}else if(currentActor != -1 && actor[currentActor].isPlayer()){
 			distractBtn.mouseMove(x, y);
 		}
 	}
