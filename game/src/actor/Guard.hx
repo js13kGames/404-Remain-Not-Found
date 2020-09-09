@@ -52,15 +52,18 @@ class Guard extends Actor{
 
 		for(s in g.snd){
 			if(s.alive && LcMath.dist(s.x, s.y, x, y) < (gridSize / 2) + s.r){
+				if(alrt == null){
+					rtnPoint = {
+						x: Math.floor(x / gridSize),
+						y: Math.floor(y / gridSize)
+					}
+					rtnDir = dir;
+				}
+
 				alrt = {
 					x: Math.floor(s.x / gridSize),
 					y: Math.floor(s.y / gridSize)
 				};
-				rtnPoint = {
-					x: Math.floor(x / gridSize),
-					y: Math.floor(y / gridSize)
-				}
-				rtnDir = dir;
 			}
 		}
 	}
@@ -159,7 +162,7 @@ class Guard extends Actor{
 		vc.globalCompositeOperation = "destination-out";
 		vc.fillStyle="#000";
 		for(w in g.walls){
-			w.renderShadow(vc, x, y, VIEW_DIST);
+			w.renderShadow(vc, x, y, VIEW_DIST * VIEW_DIST);
 		}
 
 		c.drawImage(vc.canvas, 0, 0);
