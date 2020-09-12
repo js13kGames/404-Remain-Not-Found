@@ -53,7 +53,8 @@ class PlayRoom extends Room{
 		goals = new Array<Goal>();
 		snd = new Array<Sound>();
 
-		distractBtn = new Button(20, c.canvas.height - 70, "👏", distract);
+		distractBtn = new Button(120, 0, "👏", distract, 120);
+		distractBtn.y = c.canvas.height - (distractBtn.aabb.h - 20);
 	}
 
 	override function update(c:CanvasRenderingContext2D, s:Float) {
