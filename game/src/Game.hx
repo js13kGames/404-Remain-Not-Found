@@ -84,7 +84,7 @@ class Game{
 	}
 
 	public function menu(){
-		r = new MenuRoom(this);
+		r = new MenuRoom(this, c);
 	}
 
 	public function end(){
