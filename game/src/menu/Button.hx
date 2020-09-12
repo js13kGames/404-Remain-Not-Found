@@ -6,7 +6,7 @@ import js.html.CanvasRenderingContext2D;
 class Button extends Entity{
 	private static inline var PADDING = 20;
 
-	private var text:String;
+	public var text(default, default):String;
 	private var over:Bool;
 
 	private var callback:Void->Void;

@@ -9,7 +9,7 @@ import js.html.AudioElement;
 class SoundManager {
 
 	private var s:Map<String, AudioElement>;
-	private var v:Float;
+	public var v(default, default):Float;
 
 	@:keep
 	public function new(soundDefList:Array<SoundDef>) {
@@ -34,6 +34,6 @@ class SoundManager {
 
 	@:keep
 	private static function __init__(){
-		haxe.macro.Compiler.includeFile("res/jsfxr.js");
+		haxe.macro.Compiler.includeFile("res/jsfxr.js"); 
 	}
 }

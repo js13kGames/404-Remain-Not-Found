@@ -41,6 +41,7 @@ class PlayRoom extends Room{
 	private var menu:MenuPage = null;
 
 	private var distractBtn:Button;
+	private var volumeButton:Button;
 
 	public function new(g:Game, c:CanvasRenderingContext2D){
 		super(g);
@@ -55,6 +56,8 @@ class PlayRoom extends Room{
 
 		distractBtn = new Button(120, 0, "👏", distract, 120);
 		distractBtn.y = c.canvas.height - (distractBtn.aabb.h - 20);
+
+		volumeButton = new Button(0, 60, "🔊", toggleVolume, 60);
 	}
 
 	override function update(c:CanvasRenderingContext2D, s:Float) {
@@ -155,6 +158,9 @@ class PlayRoom extends Room{
 		else if(isPlayerTurn()){
 			distractBtn.render(c);
 		}
+
+		volumeButton.x = c.canvas.width - volumeButton.aabb.w + 20;
+		volumeButton.render(c);
 	}
 
 	override function pan(dx:Float, dy:Float) {
@@ -191,6 +197,8 @@ class PlayRoom extends Room{
 		}else if(isPlayerTurn()){
 			distractBtn.click(x, y);
 		}
+
+		volumeButton.click(x, y);
 	}
 
 	override function mouseMove(x:Float, y:Float) {
@@ -201,6 +209,8 @@ class PlayRoom extends Room{
 		}else if(currentActor != -1 && actor[currentActor].isPlayer()){
 			distractBtn.mouseMove(x, y);
 		}
+
+		volumeButton.mouseMove(x, y);
 	}
 
 	public function loadLevel(d:LvlDef){
@@ -363,5 +373,15 @@ class PlayRoom extends Room{
 
 	private inline function isPlayerTurn(){
 		return currentActor != -1 && actor[currentActor].isPlayer();
+	}
+
+	private inline function toggleVolume(){
+		if(Main.s.v == 0){
+			Main.s.v = 1;
+			volumeButton.text = "🔊";
+		}else{
+			Main.s.v = 0;
+			volumeButton.text = "🔈";
+		}
 	}
 }
