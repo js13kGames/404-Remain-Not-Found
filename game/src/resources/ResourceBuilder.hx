@@ -14,9 +14,11 @@ class ResourceBuilder{
 	macro public static function build(){
 
 		var lvl:Array<LvlDef> = buildLevels();
+		var snd:Array<SoundDef> = buildSounds();
 
 		var c = macro class R {
 			public var lvl:Array<resources.LvlDef> = $v{lvl};
+			public var snd:Array<resources.SoundDef> = $v{snd};
 			public function new() {}
 		}
 
@@ -180,6 +182,34 @@ class ResourceBuilder{
 		}
 
 		return def;
+	}
+
+	private static function buildSounds():Array<SoundDef>{
+		var sounds:Array<SoundDef> = new Array<SoundDef>();
+		var soundPath:String = "res/sound/";
+		for (f in FileSystem.readDirectory(soundPath)) {
+			var path:Path = new Path(soundPath + f);
+			if (path.ext == "txt") {
+				sounds.push(buildSound(path));
+			}
+		}
+
+		return sounds;
+	}
+
+	private static function buildSound(path:Path):SoundDef {
+		var txt = File.getContent(path.toString());
+
+		var arr:Array<Float> = new Array<Float>();
+
+		for (t in txt.split(",")) {
+			arr.push(t.length > 0 ? Std.parseFloat(t) : 0);
+		}
+
+		return {
+			n: path.file,
+			d: arr
+		}
 	}
 
 	#end

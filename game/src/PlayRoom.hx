@@ -358,6 +358,7 @@ class PlayRoom extends Room{
 	private function distract(){
 		var a = actor[currentActor];
 		makeSnd(a.x, a.y, 50);
+		Main.s.play("clap");
 	}
 
 	private inline function isPlayerTurn(){

@@ -1,5 +1,6 @@
 package;
 
+import js.html.KeyboardEvent;
 import js.html.URLSearchParams;
 import js.html.URL;
 import math.Vec;
@@ -19,6 +20,7 @@ class Main{
 
 	public static var c:CanvasRenderingContext2D;
 	public static var g:Game;
+	public static var s:SoundManager;
 
 	public static var lastFrame:Float = 0;
 
@@ -35,6 +37,7 @@ class Main{
 
 		c = canvas.getContext2d();
 		g = new Game(c);
+		s = new SoundManager(r.snd);
 
 		Browser.window.onmousedown = onMouseDown;
 		Browser.window.onmouseup = onMouseUp;
@@ -44,6 +47,15 @@ class Main{
 		Browser.window.ontouchstart = onTouchStart;
 		Browser.window.ontouchmove = onTouchMove;
 		Browser.window.ontouchend = onTouchEnd;
+
+		Browser.window.onkeypress = function(e:KeyboardEvent){
+			var id = Std.parseInt(e.key);
+			if(id == 0){
+				id = 10;
+			}
+
+			g.loadLevel(r.lvl[id]);
+		}
 
 		var p = new URLSearchParams(Browser.window.location.search);
 		if(p.has("l")){

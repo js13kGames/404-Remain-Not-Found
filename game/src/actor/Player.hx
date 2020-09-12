@@ -104,6 +104,9 @@ class Player extends Actor{
 		var sp = LcMath.dist(0, 0, xSpeed, ySpeed);
 
 		g.makeSnd(x, y, 10 + (sp - MIN_NAV_SPEED) * 0.2);
+
+		var v = Math.min(1, sp / (MIN_NAV_SPEED + NAV_SPEED_MULTIPLIER * MAX_MOVE));
+		Main.s.play("step" + Std.string(Math.ceil(Math.random() * 4)), v);
 	}
 
 	override function isPlayer():Bool {

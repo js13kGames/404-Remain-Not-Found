@@ -15,6 +15,7 @@ class Guard extends Actor{
 	private var ptrlIdx:Int = -1;
 
 	private var canSeePlayer:Bool = false;
+	private var playerFound:Bool = false;
 
 	private var vc:CanvasRenderingContext2D;
 
@@ -47,6 +48,11 @@ class Guard extends Actor{
 				canSeePlayer = true;
 				resetNav();
 				g.spotted(this, p);
+
+				if(!playerFound){
+					playerFound = true;
+					Main.s.play("found");
+				}
 			}
 		}
 
@@ -60,10 +66,16 @@ class Guard extends Actor{
 					rtnDir = dir;
 				}
 
+				var last:Point = alrt;
+
 				alrt = {
 					x: Math.floor(s.x / gridSize),
 					y: Math.floor(s.y / gridSize)
 				};
+
+				if(last != null && (alrt.x != last.x || alrt.y != last.y)){
+					Main.s.play("distr");
+				}
 			}
 		}
 	}
@@ -168,8 +180,15 @@ class Guard extends Actor{
 		c.drawImage(vc.canvas, 0, 0);
 
 		if(alrt != null){
+			c.font = "30px arial";
 			c.fillStyle = "#FF0";
 			c.fillText("?", x, y);
 		}
+	}
+
+	override function step() {
+		super.step();
+
+		Main.s.play("step" + Std.string(Math.ceil(Math.random() * 4)));
 	}
 }
