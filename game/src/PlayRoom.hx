@@ -80,6 +80,9 @@ class PlayRoom extends Room{
 					currentActor = (currentActor + 1 >= actor.length) ? 0 : currentActor + 1;
 		
 					actor[currentActor].phase = Phase.TURN_START;
+				}else if(l == -2){
+					// game complete
+					g.menu();
 				}else{
 					currentActor = -1;
 					// TODO begin transition
