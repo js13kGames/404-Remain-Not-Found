@@ -12,7 +12,6 @@ import js.html.CanvasRenderingContext2D;
 import actor.Actor;
 import actor.Player;
 import astar.BspGrid;
-import math.AABB;
 
 class PlayRoom extends Room{
 	private var c:CanvasRenderingContext2D;
@@ -85,7 +84,7 @@ class PlayRoom extends Room{
 					actor[currentActor].phase = Phase.TURN_START;
 				}else if(l == -2){
 					// game complete
-					g.menu();
+					g.end();
 				}else{
 					currentActor = -1;
 					// TODO begin transition
