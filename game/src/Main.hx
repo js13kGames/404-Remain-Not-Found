@@ -48,15 +48,6 @@ class Main{
 		Browser.window.ontouchmove = onTouchMove;
 		Browser.window.ontouchend = onTouchEnd;
 
-		Browser.window.onkeypress = function(e:KeyboardEvent){
-			var id = Std.parseInt(e.key);
-			if(id == 0){
-				id = 10;
-			}
-
-			g.loadLevel(r.lvl[id]);
-		}
-
 		var p = new URLSearchParams(Browser.window.location.search);
 		if(p.has("l")){
 			g.loadLevel(r.lvl[Std.parseInt(p.get("l"))]);
